@@ -8,27 +8,20 @@
 
 namespace GkSmarty\Smarty;
 
-
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Resolver\TemplateMapResolver;
 
 class TemplateMapResolverFactory implements FactoryInterface
 {
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $arOptions = null)
     {
         /** @var \GkSmarty\ModuleOptions $options */
-        $options = $serviceLocator->get('GkSmarty\ModuleOptions');
+        $options = $container->get('GkSmarty\ModuleOptions');
 
         /** @var \Zend\View\Resolver\TemplateMapResolver */
-        $templateMap = $serviceLocator->get('ViewTemplateMapResolver');
+        $templateMap = $container->get('ViewTemplateMapResolver');
 
         // build map of template files with registered extension
         $map = array();
@@ -39,5 +32,15 @@ class TemplateMapResolverFactory implements FactoryInterface
         }
 
         return new TemplateMapResolver($map);
+    }
+    /**
+     * Create service
+     *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @return mixed
+     */
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
+        return $this($serviceLocator, TemplateMapResolver::class);
     }
 }

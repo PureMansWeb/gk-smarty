@@ -8,13 +8,18 @@
 
 namespace GkSmarty;
 
-
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ModuleOptionsFactory implements FactoryInterface
 {
+    public function __invoke(ContainerInterface $container, $requestedName, array $arOptions = null)
+    {
+        $config = $container->get('Configuration');
 
+        return new ModuleOptions(isset($config['gk_smarty']) ? $config['gk_smarty'] : array());
+    }
     /**
      * Create service
      *
@@ -23,8 +28,6 @@ class ModuleOptionsFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('Configuration');
-
-        return new ModuleOptions(isset($config['gk_smarty']) ? $config['gk_smarty'] : array());
+        return $this($serviceLocator, ModuleOptions::class);
     }
 }

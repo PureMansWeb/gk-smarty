@@ -8,13 +8,18 @@
 
 namespace GkSmarty\View;
 
-
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class SmartyStrategyFactory implements FactoryInterface
-{
-
+{   
+    
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        return new SmartyStrategy($container->get('GkSmartyRenderer'));
+    }
+    
     /**
      * Create service
      *
@@ -23,6 +28,6 @@ class SmartyStrategyFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new SmartyStrategy($serviceLocator->get('GkSmartyRenderer'));
+        return $this($serviceLocator, SmartyStrategy::class);
     }
 }

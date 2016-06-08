@@ -8,13 +8,23 @@
 
 namespace GkSmarty\Smarty;
 
-
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class TemplatePathStackFactory implements FactoryInterface
 {
+    public function __invoke(ContainerInterface $container, $requestedName, array $arOptions = null)
+    {
+        /** @var \GkSmarty\ModuleOptions $options */
+        $options = $container->get('GkSmarty\ModuleOptions');
 
+        /** @var \Zend\View\Resolver\TemplatePathStack */
+        $templatePathStack = $container->build('ViewTemplatePathStack');
+        $templatePathStack->setDefaultSuffix($options->getSuffix());
+
+        return $templatePathStack;
+    }
     /**
      * Create service
      *
@@ -23,13 +33,6 @@ class TemplatePathStackFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \GkSmarty\ModuleOptions $options */
-        $options = $serviceLocator->get('GkSmarty\ModuleOptions');
-
-        /** @var \Zend\View\Resolver\TemplatePathStack */
-        $templatePathStack = $serviceLocator->create('ViewTemplatePathStack');
-        $templatePathStack->setDefaultSuffix($options->getSuffix());
-
-        return $templatePathStack;
+        return $this($serviceLocator, \Zend\View\Resolver\TemplatePathStack::class);
     }
 }

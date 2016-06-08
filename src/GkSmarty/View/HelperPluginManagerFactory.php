@@ -8,7 +8,7 @@
 
 namespace GkSmarty\View;
 
-
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\FactoryInterface;
@@ -17,24 +17,18 @@ use Zend\View\Exception;
 
 class HelperPluginManagerFactory implements FactoryInterface
 {
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $arOptions = null)
     {
         /** @var \GkSmarty\ModuleOptions $options */
-        $options = $serviceLocator->get('GkSmarty\ModuleOptions');
+        $options = $container->get('GkSmarty\ModuleOptions');
         $smartyManagerOptions = $options->getHelperManager();
         $smartyManagerConfigs = isset($smartyManagerOptions['configs']) ? $smartyManagerOptions['configs'] : array();
 
-        $zfManager = $serviceLocator->get('ViewHelperManager');
-        $smartyManager = new HelperPluginManager(new Config($smartyManagerOptions));
-        $smartyManager->setServiceLocator($serviceLocator);
-        $smartyManager->addPeeringServiceManager($zfManager);
+        $zfManager = $container->get('ViewHelperManager');
+//        $smartyManager = new HelperPluginManager(new Config($smartyManagerOptions));
+//        $smartyManager->setServiceLocator($container);
+//        $smartyManager->addPeeringServiceManager($zfManager);
+        $smartyManager = new HelperPluginManager($container);
 
         foreach ($smartyManagerConfigs as $configClass) {
             if (is_string($configClass) && class_exists($configClass)) {
@@ -55,5 +49,15 @@ class HelperPluginManagerFactory implements FactoryInterface
         }
 
         return $smartyManager;
+    }
+    /**
+     * Create service
+     *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @return mixed
+     */
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
+        return $this($serviceLocator, HelperPluginManager::class);
     }
 }
