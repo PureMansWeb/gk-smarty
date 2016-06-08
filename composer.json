@@ -1,5 +1,5 @@
 {
-    "name": "gkralik/gk-smarty",
+    "name": "puremansweb/gk-smarty",
     "description": "Zend Framework 2 Module that provides a Smarty rendering strategy",
     "type": "library",
     "keywords": [
@@ -7,7 +7,7 @@
         "module",
         "zf2"
     ],
-    "homepage": "http://www.github.com/gkralik/GkSmarty/",
+    "homepage": "https://github.com/PureMansWeb/gk-smarty/",
     "license": "MIT",
     "authors": [
         {
