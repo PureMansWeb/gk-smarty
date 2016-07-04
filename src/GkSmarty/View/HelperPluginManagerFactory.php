@@ -28,8 +28,9 @@ class HelperPluginManagerFactory implements FactoryInterface
 //        $smartyManager = new HelperPluginManager(new Config($smartyManagerOptions));
 //        $smartyManager->setServiceLocator($container);
 //        $smartyManager->addPeeringServiceManager($zfManager);
-        $smartyManager = new HelperPluginManager($container);
-
+//$smartyManager = new HelperPluginManager($container);
+        $smartyManager = $zfManager;
+        
         foreach ($smartyManagerConfigs as $configClass) {
             if (is_string($configClass) && class_exists($configClass)) {
                 $config = new $configClass;
